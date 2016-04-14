@@ -1,0 +1,6 @@
+.idea/
+.eslintrc
+node_modules/
+.DS_Store
+bundle-compiled.js
+bundle-compiled.js.map
