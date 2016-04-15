@@ -58,9 +58,7 @@ var Login = React.createClass({
     })
       .then((response) => response.json())
       .then((jsonData) => {
-        if (jsonData.status == 200) {
-
-        }
+        
       })
       .catch((error) => {console.error("error")});
   },

@@ -1,5 +1,8 @@
 module.exports = {
-  entry: "./src/index.js",
+  entry: [
+    'webpack/hot/only-dev-server',
+    "./src/index.js"
+    ],
   output: {
     path: __dirname,
     filename: "bundle.js"

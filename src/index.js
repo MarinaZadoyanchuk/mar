@@ -1,25 +1,33 @@
-const Login = require('./login.js');
 const ReactDOM = require('react-dom');
 const React = require('react');
 const Router = require('react-router').Router;
 const Route = require('react-router').Route;
-const Link = require('react-router').Link;
-const hashHistory = require('react-router').hashHistory;
+const IndexRoute = require('react-router').IndexRoute;
+const createBrowserHistory = require('react-router').createMemoryHistory;
+const NavLink = require('./NavLink');
+const Login = require('./login');
+const Home = require('./home');
+
+const history = createBrowserHistory();
 
 const App = React.createClass({
   render: function() {
     return(
       <div>
-        <h1>Front page</h1>
-        <li><Link to="/login">Login</Link></li>
+        <ul className="nav nav-pills">
+          <li><NavLink to="/" onlyActiveOnIndex={true}>Home</NavLink></li>
+          <li><NavLink to="/login">Login</NavLink></li>
+        </ul>
+        {this.props.children}
       </div>
     );
   }
 });
 
 ReactDOM.render((
-  <Router history={hashHistory}>
+  <Router history={history}>
     <Route path="/" component={App}>
+      <IndexRoute component={Home} />
       <Route path="login" component={Login} />
     </Route>
   </Router>
