@@ -1,50 +1,16 @@
-var React = require('react');
-var Input = require('react-bootstrap').Input;
-var Button = require('react-bootstrap').Button;
+const React = require('react');
+const Input = require('react-bootstrap').Input;
+const Button = require('react-bootstrap').Button;
+let BrowserHistory = require('react-router').browserHistory;
 
-var Login = React.createClass({
+const Login = React.createClass({
   getInitialState: function() {
     return {
       valueLogin: '',
-      valuePass: '',
-      isValidationComponets: {},
-      isValidation: false
-    }
-  },
-  handleChangeLogin: function() {
-    // This could also be done using ReactLink:
-    // http://facebook.github.io/react/docs/two-way-binding-helpers.html
-    this.setState({
-      valueLogin: this.refs.login.getValue()
-    });
-  },
-  handleChangePassword: function() {
-    // This could also be done using ReactLink:
-    // http://facebook.github.io/react/docs/two-way-binding-helpers.html
-    this.setState({
-      valuePass: this.refs.password.getValue()
-    });
-  },
-  validationState: function (name, value, min, max) {
-    min = min || 0;
-    max = max || 10;
-    const middle = (max + min) / 2;
-    let length = value.length;
-    if (length > middle) {
-      this.state.isValidationComponets[name] = true;
-      return 'success';
-    }
-    else if (length > min && length <= middle) {
-      this.state.isValidationComponets[name] = true;
-      return 'warning';
-    }
-    else if (length <= min && length > 0) {
-      this.state.isValidationComponets[name] = false;
-      return 'error';
+      valuePass: ''
     }
   },
   logIn: function() {
-    const self = this;
     fetch('http://localhost:3000/user/login', {
       method: 'POST',
       headers: {
@@ -52,19 +18,22 @@ var Login = React.createClass({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        login: self.state.valueLogin,
-        password: self.state.valuePass
+        login: this.refs.login.getValue(),
+        password: this.refs.password.getValue()
       })
     })
       .then((response) => response.json())
       .then((jsonData) => {
-        
+        if (jsonData.status == 200) {
+          window.sessionStorage.setItem('token', jsonData.token);
+          BrowserHistory.push('/user/' + jsonData.userId);
+        } else {
+          console.log(jsonData);
+        }
       })
-      .catch((error) => {console.error("error")});
+      .catch((error) => {console.error(error)});
   },
   render: function() {
-    
-    this.state.isValidation = this.state.isValidationComponets.login && this.state.isValidationComponets.password;
 
     return (
       <div className="center-block login">
@@ -77,10 +46,8 @@ var Login = React.createClass({
           bsSize="medium"
           hasFeedback
           ref="login"
-          bsStyle={this.validationState('login', this.state.valueLogin, 2)}
           groupClassName="group-class"
-          labelClassName="label-class"
-          onChange={this.handleChangeLogin} />
+          labelClassName="label-class" />
         <Input
           type="password"
           value={this.state.valuePass}
@@ -90,13 +57,10 @@ var Login = React.createClass({
           label="Password"
           hasFeedback
           ref="password"
-          bsStyle={this.validationState('password', this.state.valuePass, 6, 60)}
-          onChange={this.handleChangePassword}
         />
         <Button
           bsStyle="primary"
-          disabled={!this.state.isValidation}
-          onClick={this.state.isValidation ? this.logIn : null}>
+          onClick={this.logIn}>
           Log in
         </Button>
       </div>
